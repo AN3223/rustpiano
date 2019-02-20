@@ -9,23 +9,26 @@ use std::io::{BufReader, BufRead};
 use std::io;
 use std::fs;
 
+fn download_file(linkr: io::Result<String>) {
+    let link = linkr.expect("failed to read from piano_sound_links");
+    let mut resp = reqwest::get(&link).expect("request failed");
+
+    let filename = "sounds/".to_owned() + &link.clone().split_off(link.len() - 7);
+    let mut file = File::create(filename).expect("file creation failed");
+
+    io::copy(&mut resp, &mut file).expect("failed to copy to file");
+}
+
 fn get_sound_files() {
     let handle = File::open("piano_sound_links")
         .expect("unable to find piano_sound_links");
 
     // Concurrently iterate over all of the links in piano_sound_links
     // and download them
-    BufReader::new(handle).lines().par_bridge().map(
-        |linkr| {
-            let link = linkr.expect("failed to read from piano_sound_links");
-            let mut resp = reqwest::get(&link).expect("request failed");
-
-            let filename = "sounds/".to_owned() + &link.clone().split_off(link.len() - 7);
-            let mut file = File::create(filename).expect("file creation failed");
-
-            io::copy(&mut resp, &mut file).expect("failed to copy to file");
-        }
-    ).for_each(drop);
+    BufReader::new(handle).lines()
+        .par_bridge()
+        .map(download_file)
+        .for_each(drop);
 }
 
 fn main() {
