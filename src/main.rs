@@ -18,7 +18,7 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
         return;
     }
 
-    let is_capital = input.modifiers.shift;
+    let is_capital = input.modifiers.shift; // TODO: Support capital letters
 
     if let Some(key) = input.virtual_keycode {
         let maybe_note = match key {
