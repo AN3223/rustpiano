@@ -11,18 +11,7 @@ use std::fs;
 use std::thread;
 use std::sync::Arc;
 
-fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
-    use glutin::ElementState::Released;
-    
-    if input.state == Released {
-        return;
-    }
-
-    dbg!(input);
-
-    let is_capital = input.modifiers.shift;
-
-    let key = input.scancode; 
+fn match_key(key: u32) -> Option<String> {
     let maybe_note = match key {
         11 => Some("48"),
         2 => Some("49"),
@@ -41,15 +30,52 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
         20 => Some("84"),
         21 => Some("89"),
         22 => Some("85"),
-        // TODO: Add the rest
+        23 => Some("73"),
+        24 => Some("79"),
+        25 => Some("80"),
+        30 => Some("65"),
+        31 => Some("83"),
+        32 => Some("68"),
+        33 => Some("70"),
+        34 => Some("71"),
+        35 => Some("72"),
+        36 => Some("74"),
+        37 => Some("75"),
+        38 => Some("76"),
+        44 => Some("90"),
+        45 => Some("88"),
+        46 => Some("67"),
+        47 => Some("86"),
+        48 => Some("66"),
+        49 => Some("78"),
+        50 => Some("77"),
         _ => None
     };
 
     if let Some(note) = maybe_note {
+        Some(note.to_owned())
+    } else {
+        None
+    }
+}
+
+
+fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
+    use glutin::ElementState::Released;
+    
+    if input.state == Released {
+        return;
+    }
+
+    dbg!(input);
+
+    let is_capital = input.modifiers.shift;
+
+    if let Some(note) = match_key(input.scancode) {
         let final_note = if is_capital {
-            "b".to_owned() + note
+            "b".to_owned() + &note
         } else {
-            "a".to_owned() + note
+            "a".to_owned() + &note
         };
 
         play_audio(audio_device, &final_note).ok();
