@@ -1,0 +1,13 @@
+[package]
+name = "rustpiano"
+version = "0.1.0"
+authors = ["AN3223 <35916076+AN3223@users.noreply.github.com>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+
+[build-dependencies]
+gl = "*"
+reqwest = "0.9"
+rayon = "*"
