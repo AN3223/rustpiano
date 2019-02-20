@@ -27,6 +27,12 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
             Key3 => Some("a51"),
             Key4 => Some("a52"),
             Key5 => Some("a53"),
+            Key6 => Some("a54"),
+            Key7 => Some("a55"),
+            Key8 => Some("a56"),
+            Key9 => Some("a57"),
+            Key0 => Some("a48"),
+            Q => Some("a81"),
             // TODO: Add the rest
             _ => None
         };
