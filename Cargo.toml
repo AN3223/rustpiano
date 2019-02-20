@@ -6,8 +6,8 @@ edition = "2018"
 build = "build.rs"
 
 [dependencies]
+gl = "*"
 
 [build-dependencies]
-gl = "*"
 reqwest = "0.9"
 rayon = "*"
