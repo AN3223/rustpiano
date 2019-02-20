@@ -6,54 +6,67 @@ use glutin::dpi::LogicalSize;
 use glutin::GlContext;
 use rodio::Device;
 use std::io::BufReader;
+use std::io;
 use std::fs;
 use std::thread;
 use std::sync::Arc;
 
 fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
-    use glutin::VirtualKeyCode::*;
     use glutin::ElementState::Released;
-
+    
     if input.state == Released {
         return;
     }
 
-    let is_capital = input.modifiers.shift; // TODO: Support capital letters
+    dbg!(input);
 
-    if let Some(key) = input.virtual_keycode {
-        let maybe_note = match key {
-            Key1 => Some("a49"),
-            Key2 => Some("a50"),
-            Key3 => Some("a51"),
-            Key4 => Some("a52"),
-            Key5 => Some("a53"),
-            Key6 => Some("a54"),
-            Key7 => Some("a55"),
-            Key8 => Some("a56"),
-            Key9 => Some("a57"),
-            Key0 => Some("a48"),
-            Q => Some("a81"),
-            // TODO: Add the rest
-            _ => None
+    let is_capital = input.modifiers.shift;
+
+    let key = input.scancode; 
+    let maybe_note = match key {
+        11 => Some("48"),
+        2 => Some("49"),
+        3 => Some("50"),
+        4 => Some("51"),
+        5 => Some("52"),
+        6 => Some("53"),
+        7 => Some("54"),
+        8 => Some("55"),
+        9 => Some("56"),
+        10 => Some("57"),
+        16 => Some("81"),
+        17 => Some("87"),
+        18 => Some("69"),
+        19 => Some("82"),
+        20 => Some("84"),
+        21 => Some("89"),
+        22 => Some("85"),
+        // TODO: Add the rest
+        _ => None
+    };
+
+    if let Some(note) = maybe_note {
+        let final_note = if is_capital {
+            "b".to_owned() + note
+        } else {
+            "a".to_owned() + note
         };
 
-        if let Some(note) = maybe_note {
-            play_audio(audio_device, note);
-        }
+        play_audio(audio_device, &final_note).ok();
     }
-    
 }
 
-fn play_audio(audio_device: Arc<Device>, note: &str) {
+fn play_audio(audio_device: Arc<Device>, note: &str) -> Result<(), io::Error> {
     let filename = "sounds/".to_owned() + note + ".mp3";
-    let file = fs::File::open(filename)
-        .expect("failed to open sound file");
+
+    let file = fs::File::open(filename)?;
 
     thread::spawn(move || {
         rodio::play_once(&*audio_device, BufReader::new(file))
         .unwrap()
         .sleep_until_end()
     });
+    Ok(())
 }
 
 fn main() {
