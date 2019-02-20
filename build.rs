@@ -1,3 +1,5 @@
+/* Downloads the sound files at compile time */
+
 extern crate reqwest;
 extern crate rayon;
 
@@ -32,6 +34,8 @@ fn get_sound_files() {
 }
 
 fn main() {
+    // If the "sounds" directory does not exist, then create one
+    // and download all of the necessary sounds into it
     if !fs::metadata("sounds").is_ok() {
         fs::create_dir("sounds").expect("could not create sounds directory");
         get_sound_files();
