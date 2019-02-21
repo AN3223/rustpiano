@@ -97,7 +97,11 @@ fn play_silence(audio_device: &Device) {
     use rodio::source::{Zero, Source};
 
     let format = audio_device.default_output_format().unwrap();
-    rodio::play_raw(&audio_device, Zero::new(format.channels, format.sample_rate.0).repeat_infinite());
+    
+    rodio::play_raw(
+        &audio_device,
+        Zero::new(format.channels, format.sample_rate.0).repeat_infinite()
+    );
 }
 
 fn main() {
