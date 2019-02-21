@@ -9,8 +9,6 @@ use rodio::Device;
 use std::io::BufReader;
 use std::io;
 use std::fs;
-use std::thread;
-use std::sync::Arc;
 
 fn match_key(key: u32) -> Option<String> {
     let maybe_note = match key {
@@ -61,7 +59,7 @@ fn match_key(key: u32) -> Option<String> {
 }
 
 
-fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
+fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
     if input.state == Released {
         return;
     }
@@ -79,20 +77,17 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
     }
 }
 
-fn play_audio(audio_device: Arc<Device>, note: &str) -> Result<(), io::Error> {
-    let filename = "sounds/".to_owned() + note + ".mp3";
-    let file = fs::File::open(filename)?;
+fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
+    let file = fs::File::open(format!("sounds/{}.mp3", note))?;
 
-    thread::spawn(move || {
-        rodio::play_once(&*audio_device, BufReader::new(file))
+    rodio::play_once(audio_device, BufReader::new(file))
         .unwrap()
-        .sleep_until_end()
-    });
+        .detach();
     Ok(())
 }
 
 fn main() {
-    let audio_device = Arc::new(rodio::default_output_device().unwrap());
+    let audio_device = rodio::default_output_device().unwrap();
     let mut events_loop = glutin::EventsLoop::new();
 
     let window = glutin::WindowBuilder::new()
@@ -113,7 +108,7 @@ fn main() {
             match event {
                 glutin::Event::WindowEvent{ event, .. } => match event {
                     glutin::WindowEvent::KeyboardInput { input, .. } => {
-                        handle_keypress(Arc::clone(&audio_device), input);
+                        handle_keypress(&audio_device, input);
                     }
                     glutin::WindowEvent::CloseRequested => running = false,
                     _ => ()
