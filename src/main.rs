@@ -10,6 +10,7 @@ use std::io::BufReader;
 use std::io;
 use std::fs;
 
+// Takes a scan code for a key and returns the corresponding note (if any)
 fn match_key(key: u32) -> Option<String> {
     let maybe_note = match key {
         11 => Some("48"),
@@ -59,6 +60,8 @@ fn match_key(key: u32) -> Option<String> {
 }
 
 
+// Takes a keypress and an audio device and plays the corresponding
+// key (if any) into the audio device.
 fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
     if input.state == Released {
         return;
@@ -77,12 +80,15 @@ fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
     }
 }
 
+// Takes a reference to an audio device, and the name of a note, and 
+// it will attempt to play the note into the audio device.
 fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
     let file = fs::File::open(format!("sounds/{}.mp3", note))?;
 
     rodio::play_once(audio_device, BufReader::new(file))
         .unwrap()
         .detach();
+
     Ok(())
 }
 
