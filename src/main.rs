@@ -79,7 +79,6 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
     }
 }
 
-
 fn play_audio(audio_device: Arc<Device>, note: &str) -> Result<(), io::Error> {
     let filename = "sounds/".to_owned() + note + ".mp3";
     let file = fs::File::open(filename)?;
