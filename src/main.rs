@@ -94,10 +94,10 @@ fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
 
 // Plays a constant silence in the background, can prevent audio glitches
 fn play_silence(audio_device: &Device) {
-    use rodio::source::Zero;
+    use rodio::source::{Zero, Source};
 
     let format = audio_device.default_output_format().unwrap();
-    rodio::play_raw(&audio_device, Zero::new(format.channels, format.sample_rate.0));
+    rodio::play_raw(&audio_device, Zero::new(format.channels, format.sample_rate.0).repeat_infinite());
 }
 
 fn main() {
