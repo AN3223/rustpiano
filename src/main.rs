@@ -92,8 +92,18 @@ fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
     Ok(())
 }
 
+// Plays a constant silence in the background, can prevent audio glitches
+fn play_silence(audio_device: &Device) {
+    use rodio::source::Zero;
+
+    let format = audio_device.default_output_format().unwrap();
+    rodio::play_raw(&audio_device, Zero::new(format.channels, format.sample_rate.0));
+}
+
 fn main() {
     let audio_device = rodio::default_output_device().unwrap();
+    play_silence(&audio_device);
+    
     let mut events_loop = glutin::EventsLoop::new();
 
     let window = glutin::WindowBuilder::new()
