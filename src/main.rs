@@ -3,6 +3,7 @@ extern crate glutin;
 extern crate rodio;
 
 use glutin::dpi::LogicalSize;
+use glutin::ElementState::Released;
 use glutin::GlContext;
 use rodio::Device;
 use std::io::BufReader;
@@ -61,13 +62,9 @@ fn match_key(key: u32) -> Option<String> {
 
 
 fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
-    use glutin::ElementState::Released;
-    
     if input.state == Released {
         return;
     }
-
-    dbg!(input);
 
     let is_capital = input.modifiers.shift;
 
@@ -84,7 +81,6 @@ fn handle_keypress(audio_device: Arc<Device>, input: glutin::KeyboardInput) {
 
 fn play_audio(audio_device: Arc<Device>, note: &str) -> Result<(), io::Error> {
     let filename = "sounds/".to_owned() + note + ".mp3";
-
     let file = fs::File::open(filename)?;
 
     thread::spawn(move || {
