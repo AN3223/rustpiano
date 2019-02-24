@@ -79,6 +79,7 @@ pub fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
 pub fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
     let file = fs::File::open(format!("sounds/{}.mp3", note))?;
 
+    // TODO: Store all of the files in memory
     rodio::play_once(audio_device, BufReader::new(file))
         .unwrap()
         .detach();
