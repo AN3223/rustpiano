@@ -4,11 +4,10 @@ extern crate rodio;
 
 use glutin::dpi::LogicalSize;
 use glutin::GlContext;
-use rustpiano::{play_silence, handle_keypress};
+use rustpiano::handle_keypress;
 
 fn main() {
     let audio_device = rodio::default_output_device().unwrap();
-    play_silence(&audio_device);
     
     let mut events_loop = glutin::EventsLoop::new();
 
