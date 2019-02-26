@@ -78,10 +78,13 @@ pub fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
 // it will attempt to play the note into the audio device.
 pub fn play_audio(audio_device: &Device, note: &str) -> Result<(), io::Error> {
     let file = fs::File::open(format!("sounds/{}.mp3", note))?;
+    let sound = rodio::Decoder::new(BufReader::new(file)).unwrap();
 
-    rodio::play_once(audio_device, BufReader::new(file))
-        .unwrap()
-        .detach();
+    let mut sink = rodio::Sink::new(audio_device);
+    sink.set_volume(0.9); // Lower values help prevent clipping when playing multiple notes
+    // TODO: Maybe make the volume customizable?
+    sink.append(sound);
+    sink.detach();
 
     Ok(())
 }
