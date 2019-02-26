@@ -65,9 +65,9 @@ pub fn handle_keypress(audio_device: &Device, input: glutin::KeyboardInput) {
 
     if let Some(note) = match_key(input.scancode) {
         let final_note = if is_capital {
-            "b".to_owned() + &note
+            format!("b{}", note)
         } else {
-            "a".to_owned() + &note
+            format!("a{}", note)
         };
 
         play_audio(audio_device, &final_note).ok();
