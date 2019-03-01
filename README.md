@@ -1,4 +1,4 @@
 # rustpiano
-Work in progress, compile in release mode.
+Work in progress. Compile in release mode.
 
 Rustpiano has only been tested on Linux.
