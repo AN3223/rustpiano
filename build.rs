@@ -15,7 +15,7 @@ fn download_file(linkr: io::Result<String>) {
     let link = linkr.expect("failed to read from piano_sound_links");
     let mut resp = reqwest::get(&link).expect("request failed");
 
-    let filename = "sounds/".to_owned() + &link.clone().split_off(link.len() - 7);
+    let filename = format!("sounds/{}", link.clone().split_off(link.len() - 7));
     let mut file = File::create(filename).expect("file creation failed");
 
     io::copy(&mut resp, &mut file).expect("failed to copy to file");
