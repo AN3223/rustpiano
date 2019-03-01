@@ -6,6 +6,9 @@ use glutin::dpi::LogicalSize;
 use glutin::GlContext;
 use rustpiano::handle_keypress;
 
+use std::thread::sleep;
+use std::time::Duration;
+
 fn main() {
     let audio_device = rodio::default_output_device().unwrap();
     
@@ -43,5 +46,6 @@ fn main() {
         }
 
         gl_window.swap_buffers().unwrap();
+        sleep(Duration::from_millis(17));
     }
 }
