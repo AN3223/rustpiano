@@ -10,14 +10,23 @@ use std::fs::File;
 use std::io::{BufReader, BufRead};
 use std::io;
 use std::fs;
+use std::path;
+use std::env;
+
+fn sounds_path() -> path::PathBuf {
+    [&env::var("OUT_DIR").unwrap(), "sounds"]
+        .iter().collect()
+}
 
 fn download_file(linkr: io::Result<String>) {
     let link = linkr.expect("failed to read from piano_sound_links");
     let mut resp = reqwest::get(&link).expect("request failed");
 
-    let filename = format!("sounds/{}", link.clone().split_off(link.len() - 7));
-    let mut file = File::create(filename).expect("file creation failed");
+    let filename = link.clone().split_off(link.len() - 7);
+    let mut filepath = sounds_path();
+    filepath.push(filename);
 
+    let mut file = File::create(filepath).expect("file creation failed");
     io::copy(&mut resp, &mut file).expect("failed to copy to file");
 }
 
@@ -36,8 +45,8 @@ fn get_sound_files() {
 fn main() {
     // If the "sounds" directory does not exist, then create one
     // and download all of the necessary sounds into it
-    if !fs::metadata("sounds").is_ok() {
-        fs::create_dir("sounds").expect("could not create sounds directory");
+    if !fs::metadata(sounds_path()).is_ok() {
+        fs::create_dir(sounds_path()).expect("could not create sounds directory");
         get_sound_files();
     }
 }
